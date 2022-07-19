@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}
+
+model TweetedRequest {
+  id                     String        @id @default(cuid())
+  requestedUserTwitterID String
+  tweetID                String?
+  tweetTextWithoutURL    String?
+  tweetAuthorId          String?
+  tweetUserName          String?
+  tweetVerified          Boolean
+  tweetProfileImageUrl   String?
+  tweetMediaFile         String?
+  tweetUserId            String?
+  statusURL              String?
+  mugsGenerated          MugsGenerated @default(PENDING)
+  bannerBear             BannerBear[]
+}
+
+model BannerBear {
+  id                     String          @id @default(cuid())
+  requestedUserTwitterID String?
+  generatedBannerUID     String?
+  templateId             String?
+  status                 String?
+  image_url_png          String?
+  image_url_jpg          String?
+  TweetedRequest         TweetedRequest? @relation(fields: [tweetedRequestId], references: [id])
+  tweetedRequestId       String?
+}
+
+enum MugsGenerated {
+  PENDING
+  COMPLETED
+  FAILED
+}

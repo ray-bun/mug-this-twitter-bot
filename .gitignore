@@ -1,0 +1,8 @@
+node_modules
+# Keep environment variables out of version control
+.env
+dist/
+downloaded_images/*.jpeg
+downloaded_images/*.png
+base_images/*.jpeg
+base_images/*.png
