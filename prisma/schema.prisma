@@ -41,7 +41,17 @@ model BannerBear {
   image_url_png          String?
   image_url_jpg          String?
   TweetedRequest         TweetedRequest? @relation(fields: [tweetedRequestId], references: [id])
-  tweetedRequestId       String?
+  tweetedRequestId       String
+  cloudinary             Cloudinary[]
+}
+
+model Cloudinary {
+  id            String      @id @default(cuid())
+  publicID      String?
+  uploadedBBURL String?
+  imageURLFinal String?
+  BannerBear    BannerBear? @relation(fields: [bannerBearId], references: [id])
+  bannerBearId  String?
 }
 
 enum MugsGenerated {

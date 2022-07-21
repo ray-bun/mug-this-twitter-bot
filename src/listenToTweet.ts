@@ -2,7 +2,7 @@ import { ETwitterStreamEvent, TwitterApi } from "twitter-api-v2";
 import "./lib/env";
 import { processPrimaryTweet } from "./processPrimaryTweet";
 import { createBannerBear } from "./createBannerBear";
-
+import { createNewTweetRequest } from "./models/mug-this.server";
 export async function listenToTwit() {
   try {
     const client = new TwitterApi(process.env.BEARER_TOKEN);
@@ -44,10 +44,12 @@ export async function listenToTwit() {
         const getUserTargetTweet = await client.v1.singleTweet(tweetData.referenced_tweets[0].id);
         // Process the tweet and insert into the database. We return the tweeted data
         const processedTweet = await processPrimaryTweet(getUserTargetTweet, tweetData.author_id);
+        const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id);
+        console.log("New request ID inserted", insertNewTweetedRequest);
         // Generate banners with banner bears
         console.log("getUserTargetTweet: ", getUserTargetTweet);
         console.log("processTweet data: ", processedTweet);
-        // const bannerBear = await createBannerBear(processedTweet, tweetData.author_id);
+        await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id);
       }
     });
   } catch (err) {

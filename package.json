@@ -14,14 +14,21 @@
   "dependencies": {
     "@prisma/client": "^4.0.0",
     "@supabase/supabase-js": "^1.35.4",
+    "@types/woocommerce__woocommerce-rest-api": "^1.0.2",
+    "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "axios": "^0.23.0",
     "bannerbear": "^1.4.0",
+    "cloudinary": "^1.30.0",
     "dotenv": "^10.0.0",
+    "got": "^12.1.0",
+    "image-js": "^0.34.1",
     "node-fetch": "^3.2.8",
+    "sharp": "^0.30.7",
     "twitter-api-v2": "^1.12.3"
   },
   "devDependencies": {
     "@types/node": "^16.11.4",
+    "@types/sharp": "^0.30.4",
     "@types/ws": "^8.2.0",
     "prisma": "^4.0.0",
     "ts-node-dev": "^2.0.0",

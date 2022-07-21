@@ -1,4 +1,3 @@
-import { createNewTweetRequest } from "./models/mug-this.server";
 export async function processPrimaryTweet(userTargetTweet: any, requestedUserTwitterID: string) {
   try {
     const tweetID: string = userTargetTweet.id_str;
@@ -14,7 +13,6 @@ export async function processPrimaryTweet(userTargetTweet: any, requestedUserTwi
     const statusURL: string = `https://twitter.com/${tweetUserName}/status/${tweetID}`;
     let tweetMediaFile = "media" in userTargetTweet.entities ? userTargetTweet.entities.media[0].media_url_https : null;
     // Insert tweeted request into database
-    createNewTweetRequest(requestedUserTwitterID, tweetID, tweetTextWithoutURL, tweetAuthorId, tweetUserName, tweetVerified, tweetProfileImageUrl, tweetMediaFile, tweetUserId, statusURL);
     return { tweetID, tweetTextWithoutURL, tweetAuthorId, tweetUserName, tweetName, tweetVerified, tweetProfileImageUrl, tweetMediaFile, tweetUserId, statusURL };
   } catch (err) {
     console.log("Error catched at processPrimaryTweet.ts: ", err);
