@@ -38,9 +38,9 @@ export async function createProduct(categoryID: number, productImage: string, Pr
     type: "simple",
     regular_price: "30",
 
-    short_description: `<img class="alignnone size-full wp-image-375" src="https://mug-this.com/wp-content/uploads/2022/07/free-delivery.png" alt="FREE SHIPPING WORLD WIDE!" height="50" />`,
+    short_description: `<img src="https://mug-this.com/wp-content/uploads/2022/07/free-delivery-1.png" width="100" alt="FREE SHIPPING WORLD WIDE!" />`,
     description: ` <strong>FREE SHIPPING WORLD WIDE!</strong><br />
-    <strong>Features</strong>
+    <strong>Features</strong><br />
     <ul>
     <li>Scan the QR code to access the live tweet at any time!</li>
     <li>Coffee, tea, or art? Have it all with this eye-opening ceramic mug</li>
