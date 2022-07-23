@@ -1,3 +1,3 @@
 import { listenToTwit } from "./listenToTweet";
-console.log("START");
+console.log("START NOW");
 listenToTwit();
