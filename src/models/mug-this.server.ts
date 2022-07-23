@@ -23,6 +23,21 @@ export async function createNewTweetRequest(processedTweet: any, requestedUserTw
     },
   });
 }
+export function checkNumberOfRequests(requestedUserTwitterID: TweetedRequest["requestedUserTwitterID"]) {
+  let lastDay = Date.now() - 24 * 60 * 60 * 1000;
+
+  return prisma.tweetedRequest.findMany({
+    where: {
+      requestedUserTwitterID,
+      createdAt: {
+        gte: new Date(lastDay),
+      },
+    },
+    select: { requestedUserTwitterID: true, tweetID: true },
+    take: 10,
+  });
+}
+
 export function getRequestedUserWooCommerceCategoryID(requestedUserTwitterID: WooCommerce["requestedUserTwitterID"]) {
   return prisma.wooCommerce.findFirst({
     where: { requestedUserTwitterID },
