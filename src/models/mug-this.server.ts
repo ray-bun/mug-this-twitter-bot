@@ -1,11 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-import type { TweetedRequest, BannerBear, Cloudinary } from "@prisma/client";
+import type { TweetedRequest, BannerBear, Cloudinary, WooCommerce } from "@prisma/client";
 
-export async function createNewTweetRequest(processedTweet: any, requestedUserTwitterID: string) {
+export async function createNewTweetRequest(processedTweet: any, requestedUserTwitterID: string, requestedUser: any) {
   return prisma.tweetedRequest.create({
     data: {
       requestedUserTwitterID,
+      requestedUserProfileImage: requestedUser.profile_image_url_https,
+      requestedUserScreenName: requestedUser.screen_name,
       tweetID: processedTweet.tweetID,
       tweetTextWithoutURL: processedTweet.tweetTextWithoutURL,
       tweetAuthorId: processedTweet.tweetAuthorId,
@@ -18,6 +20,15 @@ export async function createNewTweetRequest(processedTweet: any, requestedUserTw
     },
     select: {
       id: true,
+    },
+  });
+}
+export function getRequestedUserWooCommerceCategoryID(requestedUserTwitterID: WooCommerce["requestedUserTwitterID"]) {
+  return prisma.wooCommerce.findFirst({
+    where: { requestedUserTwitterID },
+    select: {
+      wooCommerceCategoryID: true,
+      wooCommerceCategoryName: true,
     },
   });
 }
@@ -73,6 +84,24 @@ export async function insertCloudinary(
     },
     select: {
       imageURLFinal: true,
+    },
+  });
+}
+
+export async function insertWooCommerce(
+  requestedUserTwitterID: WooCommerce["requestedUserTwitterID"],
+  wooCommerceCategoryID: WooCommerce["wooCommerceCategoryID"],
+  wooCommerceCategoryName: WooCommerce["wooCommerceCategoryName"]
+) {
+  return prisma.wooCommerce.create({
+    data: {
+      requestedUserTwitterID,
+      wooCommerceCategoryID,
+      wooCommerceCategoryName,
+    },
+    select: {
+      wooCommerceCategoryID: true,
+      wooCommerceCategoryName: true,
     },
   });
 }

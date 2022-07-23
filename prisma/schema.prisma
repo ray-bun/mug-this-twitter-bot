@@ -17,19 +17,30 @@ model User {
 }
 
 model TweetedRequest {
-  id                     String        @id @default(cuid())
-  requestedUserTwitterID String
-  tweetID                String?
-  tweetTextWithoutURL    String?
-  tweetAuthorId          String?
-  tweetUserName          String?
-  tweetVerified          Boolean
-  tweetProfileImageUrl   String?
-  tweetMediaFile         String?
-  tweetUserId            String?
-  statusURL              String?
-  mugsGenerated          MugsGenerated @default(PENDING)
-  bannerBear             BannerBear[]
+  id                        String        @id @default(cuid())
+  requestedUserTwitterID    String
+  requestedUserProfileImage String?
+  requestedUserScreenName   String?
+  tweetID                   String?
+  tweetTextWithoutURL       String?
+  tweetAuthorId             String?
+  tweetUserName             String?
+  tweetVerified             Boolean
+  tweetProfileImageUrl      String?
+  tweetMediaFile            String?
+  tweetUserId               String?
+  statusURL                 String?
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+  mugsGenerated             MugsGenerated @default(PENDING)
+  bannerBear                BannerBear[]
+}
+
+model WooCommerce {
+  id                      String  @id @default(cuid())
+  requestedUserTwitterID  String
+  wooCommerceCategoryID   Int?
+  wooCommerceCategoryName String?
 }
 
 model BannerBear {
@@ -40,6 +51,8 @@ model BannerBear {
   status                 String?
   image_url_png          String?
   image_url_jpg          String?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
   TweetedRequest         TweetedRequest? @relation(fields: [tweetedRequestId], references: [id])
   tweetedRequestId       String
   cloudinary             Cloudinary[]
@@ -50,6 +63,8 @@ model Cloudinary {
   publicID      String?
   uploadedBBURL String?
   imageURLFinal String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   BannerBear    BannerBear? @relation(fields: [bannerBearId], references: [id])
   bannerBearId  String?
 }

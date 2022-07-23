@@ -3,6 +3,7 @@ import "./lib/env";
 import { processPrimaryTweet } from "./processPrimaryTweet";
 import { createBannerBear } from "./createBannerBear";
 import { createNewTweetRequest } from "./models/mug-this.server";
+import { postToTwitter } from "./postToTwitter";
 export async function listenToTwit() {
   try {
     const client = new TwitterApi(process.env.BEARER_TOKEN);
@@ -35,21 +36,24 @@ export async function listenToTwit() {
 
     stream.on(ETwitterStreamEvent.Data, async (tweet: any) => {
       const tweetData = tweet.data;
-      console.log("User requested tweetData: ", tweetData);
+      console.log("tweetData", tweetData);
       const tweetFulltext: string = tweetData.text;
       const lowerCaseTweetFulltext: string = tweetFulltext.toLowerCase();
       const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " (![Mm][Aa][Kk][Ee])");
       const commandMatched = lowerCaseTweetFulltext.match(regexTweetText);
       if (commandMatched != null && commandMatched.length > 0) {
+        const getRequestedUser = await client.v1.user({ user_id: tweetData.author_id });
+        const requestedUserProfileImageUrl: string = getRequestedUser.profile_image_url_https.replace("_normal", "");
+
+        const requestedUser = { screen_name: getRequestedUser.screen_name, profile_image_url_https: requestedUserProfileImageUrl };
+        console.log("requestedUsername", requestedUser);
+
         const getUserTargetTweet = await client.v1.singleTweet(tweetData.referenced_tweets[0].id);
         // Process the tweet and insert into the database. We return the tweeted data
         const processedTweet = await processPrimaryTweet(getUserTargetTweet, tweetData.author_id);
-        const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id);
-        console.log("New request ID inserted", insertNewTweetedRequest);
-        // Generate banners with banner bears
-        console.log("getUserTargetTweet: ", getUserTargetTweet);
-        console.log("processTweet data: ", processedTweet);
-        await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id);
+        const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id, requestedUser);
+        const bannerBearGeneratedImages = await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id, requestedUser);
+        await postToTwitter(tweetData.id, getRequestedUser.screen_name, bannerBearGeneratedImages);
       }
     });
   } catch (err) {
