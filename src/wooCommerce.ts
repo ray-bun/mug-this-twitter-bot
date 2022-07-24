@@ -27,7 +27,7 @@ export async function createCategory(categoryName: string, categoryImageURL: str
   return categoryPosted;
 }
 //Category URL https://mug-this.com/?product_cat=someusertest
-export async function createProduct(categoryID: number, productImage: string, ProductTitle: string) {
+export async function createProduct(categoryID: number, productImage: string, ProductTitle: string, ArtWorkURL: string) {
   const stripEmojis = (str: string) =>
     str
       .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, "")
@@ -36,7 +36,8 @@ export async function createProduct(categoryID: number, productImage: string, Pr
   const data = {
     name: ProductTitle,
     type: "simple",
-    regular_price: "30",
+    regular_price: "35",
+    meta_data: [{ art_work_url: ArtWorkURL }],
 
     short_description: `<img src="https://mug-this.com/wp-content/uploads/2022/07/free-delivery-1.png" width="100" alt="FREE SHIPPING WORLD WIDE!" />`,
     description: ` <strong>FREE SHIPPING WORLD WIDE!</strong><br />

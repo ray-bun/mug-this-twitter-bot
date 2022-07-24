@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
+    "start": "ts-node-dev --respawn src/index.ts",
     "postinstall": "tsc",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,7 @@
     "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "axios": "^0.23.0",
     "bannerbear": "^1.4.0",
+    "canvas": "^2.9.3",
     "cloudinary": "^1.30.0",
     "dotenv": "^10.0.0",
     "got": "^12.1.0",

@@ -66,7 +66,7 @@ export async function createBannerBear(processedTweet: any, requestedUserTwitter
             const productCategory = getRequestedUserWooCommerce === null ? wooCommerceCategory.wooCommerceCategoryID : getRequestedUserWooCommerce.wooCommerceCategoryID;
             console.log("wooCommerceCategoryID: ", productCategory);
             // Insert products into WooCommerce
-            await createProduct(productCategory, finalImageURL, processedTweet.tweetTextWithoutURL);
+            await createProduct(productCategory, finalImageURL, processedTweet.tweetTextWithoutURL, generatedBanner.image_url_png);
 
             //UPLOAD to cloudinary for processing
           } else {
@@ -180,7 +180,7 @@ async function generateBannerBearImage(
             },
           ],
           webhook_url: null,
-          transparent: false,
+          transparent: true,
           metadata: null,
         },
         true
