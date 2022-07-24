@@ -41,7 +41,9 @@ export async function listenToTwit() {
       const lowerCaseTweetFulltext: string = tweetFulltext.toLowerCase();
       const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " ([Mm][Aa][Kk][Ee])");
       const commandMatched = lowerCaseTweetFulltext.match(regexTweetText);
-      if (commandMatched != null && commandMatched.length) {
+      const checkForPrimiaryTweet = Object.hasOwn(tweetData, "referenced_tweets");
+      console.log("Primary tweet:", checkForPrimiaryTweet);
+      if (commandMatched != null && commandMatched.length && checkForPrimiaryTweet) {
         const checkTodayRequests = await checkNumberOfRequests(tweetData.author_id);
         const numberOfRequests = Object.entries(checkTodayRequests).length;
         const getRequestedUser = await client.v1.user({ user_id: tweetData.author_id });
@@ -68,6 +70,7 @@ export async function listenToTwit() {
           }
         }
       }
+      console.log("Ignore this tweet");
     });
   } catch (err) {
     console.log("Catching error: ", err);
