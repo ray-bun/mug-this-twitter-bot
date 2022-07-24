@@ -50,18 +50,20 @@ export async function listenToTwit() {
           console.log(`Exceeded Requests for today or invalid username: ${requestedUserScreenName} ${process.env.ALLOWED_REQUESTS_PER_DAY} | ${numberOfRequests}`);
         } else {
           console.log("24 hours requests: ", numberOfRequests);
-
-          const requestedUserProfileImageUrl: string = getRequestedUser.profile_image_url_https.replace("_normal", "");
-
-          const requestedUser = { screen_name: requestedUserScreenName, profile_image_url_https: requestedUserProfileImageUrl };
-          console.log("requestedUsername", requestedUser);
-
           const getUserTargetTweet = await client.v1.singleTweet(tweetData.referenced_tweets[0].id);
-          // Process the tweet and insert into the database. We return the tweeted data
-          const processedTweet = await processPrimaryTweet(getUserTargetTweet, tweetData.author_id);
-          const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id, requestedUser);
-          const bannerBearGeneratedImages = await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id, requestedUser);
-          await postToTwitter(tweetData.id, requestedUserScreenName, bannerBearGeneratedImages);
+          const targetUsernameScreenName = getUserTargetTweet.user.screen_name.toLocaleLowerCase();
+          console.log(`Target user: ${targetUsernameScreenName} Requested Username: ${requestedUserScreenName}`);
+          if (targetUsernameScreenName !== process.env.TWITTER_USER_ID) {
+            const requestedUserProfileImageUrl: string = getRequestedUser.profile_image_url_https.replace("_normal", "");
+            const requestedUser = { screen_name: requestedUserScreenName, profile_image_url_https: requestedUserProfileImageUrl };
+            console.log("requestedUsername", requestedUser);
+
+            // Process the tweet and insert into the database. We return the tweeted data
+            const processedTweet = await processPrimaryTweet(getUserTargetTweet, tweetData.author_id);
+            const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id, requestedUser);
+            const bannerBearGeneratedImages = await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id, requestedUser);
+            await postToTwitter(tweetData.id, requestedUserScreenName, bannerBearGeneratedImages);
+          }
         }
       }
     });
