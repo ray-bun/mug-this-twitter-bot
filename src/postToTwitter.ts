@@ -3,15 +3,17 @@ import "./lib/env";
 import http from "http"; // or 'https' for https:// URLs
 import fs from "fs";
 
-export async function postToTwitter(twitterThreadID: string, twitterUserName: String, bannerBearGeneratedImages: any) {
-  //
-  const client = new TwitterApi({
-    appKey: process.env.TWITTER_API_KEY,
-    appSecret: process.env.TWITTER_API_SECRET,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN,
-    accessSecret: process.env.TWITTER_ACCESS_SECRET,
-  });
-  console.log("bannerBearGeneratedImages", bannerBearGeneratedImages);
+const client = new TwitterApi({
+  appKey: process.env.TWITTER_API_KEY,
+  appSecret: process.env.TWITTER_API_SECRET,
+  accessToken: process.env.TWITTER_ACCESS_TOKEN,
+  accessSecret: process.env.TWITTER_ACCESS_SECRET,
+});
+
+export async function postToTwitter(twitterThreadID: string, twitterUserName: String, bannerBearGeneratedImages: any, cookingTweetID: any) {
+  //delete cooking tweet
+  const randomQuotes = ["Free shipping world wide!", "#Bitcoin accepted"];
+  await client.v2.deleteTweet(cookingTweetID);
   const randomImage = bannerBearGeneratedImages[Math.floor(Math.random() * bannerBearGeneratedImages.length)];
   const filename = randomImage.substring(randomImage.lastIndexOf("/") + 1);
 
@@ -27,9 +29,18 @@ export async function postToTwitter(twitterThreadID: string, twitterUserName: St
       const mediaId = await client.v1.uploadMedia(filePath);
       if (mediaId !== "") {
         // response to tweet
-        const twitterReply = await client.v2.reply(`@${twitterUserName} mugs generated! View or order your mugs at https://mug-this.com/?product_cat=${twitterUserName}`, twitterThreadID, {
-          media: { media_ids: [mediaId] },
-        });
+        const twitterReply = await client.v2.reply(
+          `@${twitterUserName} your mugs is now cooked🍴 View or order your mugs at
+
+        https://mug-this.com/?product_cat=${twitterUserName}
+        
+        * Free shipping world wide!
+        `,
+          twitterThreadID,
+          {
+            media: { media_ids: [mediaId] },
+          }
+        );
         console.log("twitterReply", twitterReply);
         console.log("mediaId", mediaId);
         fs.unlink(filePath, function (err) {
@@ -43,7 +54,11 @@ export async function postToTwitter(twitterThreadID: string, twitterUserName: St
       }
     });
   });
+}
 
-  //   const mediaId = await client.v1.uploadMedia("./downloaded_images/1.png");
-  //   console.log("Media ID: ", mediaId);
+export async function requestReceivedTweet(twitterThreadID: string, twitterUserName: String) {
+  new Promise(async (resolve, reject) => {
+    const twitterReply = await client.v2.reply(`@${twitterUserName} we're cooking🍳 your mugs! Please wait for 1 minute.`, twitterThreadID);
+    resolve(twitterReply.data.id);
+  });
 }

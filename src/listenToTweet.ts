@@ -3,7 +3,7 @@ import "./lib/env";
 import { processPrimaryTweet } from "./processPrimaryTweet";
 import { createBannerBear } from "./createBannerBear";
 import { createNewTweetRequest, checkNumberOfRequests } from "./models/mug-this.server";
-import { postToTwitter } from "./postToTwitter";
+import { postToTwitter, requestReceivedTweet } from "./postToTwitter";
 export async function listenToTwit() {
   try {
     const client = new TwitterApi(process.env.BEARER_TOKEN);
@@ -54,6 +54,7 @@ export async function listenToTwit() {
           const targetUsernameScreenName = getUserTargetTweet.user.screen_name.toLocaleLowerCase();
           console.log(`Target user: ${targetUsernameScreenName} Requested Username: ${requestedUserScreenName}`);
           if (targetUsernameScreenName !== process.env.TWITTER_USER_ID) {
+            const cookingTweetID = await requestReceivedTweet(tweetData.id, requestedUserScreenName);
             const requestedUserProfileImageUrl: string = getRequestedUser.profile_image_url_https.replace("_normal", "");
             const requestedUser = { screen_name: requestedUserScreenName, profile_image_url_https: requestedUserProfileImageUrl };
             console.log("requestedUsername", requestedUser);
@@ -62,7 +63,7 @@ export async function listenToTwit() {
             const processedTweet = await processPrimaryTweet(getUserTargetTweet, tweetData.author_id);
             const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id, requestedUser);
             const bannerBearGeneratedImages = await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id, requestedUser);
-            await postToTwitter(tweetData.id, requestedUserScreenName, bannerBearGeneratedImages);
+            await postToTwitter(tweetData.id, requestedUserScreenName, bannerBearGeneratedImages, cookingTweetID);
           }
         }
       }
