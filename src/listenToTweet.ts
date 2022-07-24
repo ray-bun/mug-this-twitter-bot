@@ -41,17 +41,19 @@ export async function listenToTwit() {
       const lowerCaseTweetFulltext: string = tweetFulltext.toLowerCase();
       const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " (![Mm][Aa][Kk][Ee])");
       const commandMatched = lowerCaseTweetFulltext.match(regexTweetText);
-      if (commandMatched != null && commandMatched.length > 0) {
+      if (commandMatched != null && commandMatched.length) {
         const checkTodayRequests = await checkNumberOfRequests(tweetData.author_id);
         const numberOfRequests = Object.entries(checkTodayRequests).length;
-        if (numberOfRequests >= Number(process.env.ALLOWED_REQUESTS_PER_DAY)) {
-          console.log(`Exceed Requests for today: ${process.env.ALLOWED_REQUESTS_PER_DAY} | `, numberOfRequests);
+        const getRequestedUser = await client.v1.user({ user_id: tweetData.author_id });
+        const requestedUserScreenName = getRequestedUser.screen_name.toLocaleLowerCase();
+        if (numberOfRequests >= Number(process.env.ALLOWED_REQUESTS_PER_DAY) && requestedUserScreenName !== process.env.TWITTER_USER_ID) {
+          console.log(`Exceed Requests for today or invalid username: ${requestedUserScreenName} ${process.env.ALLOWED_REQUESTS_PER_DAY} | ${numberOfRequests}`);
         } else {
           console.log("24 hours requests: ", numberOfRequests);
-          const getRequestedUser = await client.v1.user({ user_id: tweetData.author_id });
+
           const requestedUserProfileImageUrl: string = getRequestedUser.profile_image_url_https.replace("_normal", "");
 
-          const requestedUser = { screen_name: getRequestedUser.screen_name, profile_image_url_https: requestedUserProfileImageUrl };
+          const requestedUser = { screen_name: requestedUserScreenName, profile_image_url_https: requestedUserProfileImageUrl };
           console.log("requestedUsername", requestedUser);
 
           const getUserTargetTweet = await client.v1.singleTweet(tweetData.referenced_tweets[0].id);
@@ -59,7 +61,7 @@ export async function listenToTwit() {
           const processedTweet = await processPrimaryTweet(getUserTargetTweet, tweetData.author_id);
           const insertNewTweetedRequest = await createNewTweetRequest(processedTweet, tweetData.author_id, requestedUser);
           const bannerBearGeneratedImages = await createBannerBear(processedTweet, tweetData.author_id, insertNewTweetedRequest.id, requestedUser);
-          await postToTwitter(tweetData.id, getRequestedUser.screen_name, bannerBearGeneratedImages);
+          await postToTwitter(tweetData.id, requestedUserScreenName, bannerBearGeneratedImages);
         }
       }
     });
