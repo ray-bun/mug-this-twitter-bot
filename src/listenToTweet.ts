@@ -39,7 +39,7 @@ export async function listenToTwit() {
       console.log("tweetData", tweetData);
       const tweetFulltext: string = tweetData.text;
       const lowerCaseTweetFulltext: string = tweetFulltext.toLowerCase();
-      const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " (![Mm][Aa][Kk][Ee])");
+      const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " ([Mm][Aa][Kk][Ee])");
       const commandMatched = lowerCaseTweetFulltext.match(regexTweetText);
       if (commandMatched != null && commandMatched.length) {
         const checkTodayRequests = await checkNumberOfRequests(tweetData.author_id);
