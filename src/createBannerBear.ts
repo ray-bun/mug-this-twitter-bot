@@ -142,7 +142,7 @@ async function generateBannerBearImage(
             },
           ],
           webhook_url: null,
-          transparent: false,
+          transparent: true,
           metadata: null,
         },
         true
