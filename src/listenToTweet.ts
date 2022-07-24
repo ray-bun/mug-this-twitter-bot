@@ -46,6 +46,7 @@ export async function listenToTwit() {
         const numberOfRequests = Object.entries(checkTodayRequests).length;
         const getRequestedUser = await client.v1.user({ user_id: tweetData.author_id });
         const requestedUserScreenName = getRequestedUser.screen_name.toLocaleLowerCase();
+        console.log("requestedUserScreenName: ", requestedUserScreenName);
         if (numberOfRequests >= Number(process.env.ALLOWED_REQUESTS_PER_DAY) && requestedUserScreenName === process.env.TWITTER_USER_ID) {
           console.log(`Exceeded Requests for today or invalid username: ${requestedUserScreenName} ${process.env.ALLOWED_REQUESTS_PER_DAY} | ${numberOfRequests}`);
         } else {
