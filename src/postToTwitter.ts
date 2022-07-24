@@ -13,7 +13,9 @@ const client = new TwitterApi({
 export async function postToTwitter(twitterThreadID: string, twitterUserName: String, bannerBearGeneratedImages: any, cookingTweetID: any) {
   //delete cooking tweet
   const randomQuotes = ["Free shipping world wide!", "#Bitcoin accepted"];
+  console.log("Deleting old tweet ID: ", cookingTweetID);
   await client.v2.deleteTweet(cookingTweetID);
+
   const randomImage = bannerBearGeneratedImages[Math.floor(Math.random() * bannerBearGeneratedImages.length)];
   const filename = randomImage.substring(randomImage.lastIndexOf("/") + 1);
 
@@ -56,9 +58,14 @@ export async function postToTwitter(twitterThreadID: string, twitterUserName: St
   });
 }
 
-export async function requestReceivedTweet(twitterThreadID: string, twitterUserName: String) {
-  new Promise(async (resolve, reject) => {
-    const twitterReply = await client.v2.reply(`@${twitterUserName} we're cooking🍳 your mugs! Please wait for 1 minute.`, twitterThreadID);
-    resolve(twitterReply.data.id);
+export function requestReceivedTweet(twitterThreadID: string, twitterUserName: String) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const twitterReply = await client.v2.reply(`@${twitterUserName} we're cooking🍳 your mugs! Please wait for 1 minute.`, twitterThreadID);
+      console.log("twitterReply.data.id", twitterReply.data.id);
+      resolve(twitterReply.data.id);
+    } catch (err) {
+      reject(err);
+    }
   });
 }
