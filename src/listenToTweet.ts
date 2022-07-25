@@ -41,7 +41,7 @@ export async function listenToTwit() {
       const lowerCaseTweetFulltext: string = tweetFulltext.toLowerCase();
       const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " ([Mm][Aa][Kk][Ee])");
       const commandMatched = lowerCaseTweetFulltext.match(regexTweetText);
-      const checkForPrimiaryTweet = Object.hasOwn(tweetData, "referenced_tweets");
+      const checkForPrimiaryTweet = "referenced_tweets" in tweetData;
       console.log("Primary tweet:", checkForPrimiaryTweet);
       if (commandMatched != null && commandMatched.length && checkForPrimiaryTweet) {
         const checkTodayRequests = await checkNumberOfRequests(tweetData.author_id);

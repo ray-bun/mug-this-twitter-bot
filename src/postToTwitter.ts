@@ -2,6 +2,7 @@ import { TwitterApi } from "twitter-api-v2";
 import "./lib/env";
 import http from "http"; // or 'https' for https:// URLs
 import fs from "fs";
+import path from "path";
 
 const client = new TwitterApi({
   appKey: process.env.TWITTER_API_KEY,
@@ -18,7 +19,10 @@ export async function postToTwitter(twitterThreadID: string, twitterUserName: St
 
   const randomImage = bannerBearGeneratedImages[Math.floor(Math.random() * bannerBearGeneratedImages.length)];
   const filename = randomImage.substring(randomImage.lastIndexOf("/") + 1);
-
+  const dir = path.resolve(path.join(__dirname, "downloaded_images"));
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
   const file = fs.createWriteStream(`./downloaded_images/${filename}`);
   const filePath = `./downloaded_images/${filename}`;
   const request = http.get(randomImage, function (response) {

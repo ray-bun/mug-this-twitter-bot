@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "lib": ["esnext", "dom"],
     "allowJs": true,
     "target": "es6",
     "moduleResolution": "node",
