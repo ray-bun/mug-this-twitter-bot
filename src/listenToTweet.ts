@@ -73,6 +73,7 @@ export async function listenToTwit() {
       console.log("Ignore this tweet");
     });
   } catch (err) {
-    console.log("Catching error: ", err);
+    console.log("Catching error. Retrying", err);
+    listenToTwit();
   }
 }
