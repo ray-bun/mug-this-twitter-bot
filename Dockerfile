@@ -49,6 +49,5 @@ RUN npx prisma generate
 RUN npm run build
 
 WORKDIR ./dist
-RUN echo "test ${}"
 
 CMD node index.js
