@@ -37,8 +37,12 @@ export async function createProduct(categoryID: number, productImage: string, Pr
     name: ProductTitle,
     type: "simple",
     regular_price: "35",
-    meta_data: [{ art_work_url: ArtWorkURL }],
-
+    meta_data: [
+      {
+        key: "art_work_url",
+        value: ArtWorkURL,
+      },
+    ],
     short_description: `<img src="https://mug-this.com/wp-content/uploads/2022/07/free-delivery-1.png" width="100" alt="FREE SHIPPING WORLD WIDE!" />`,
     description: ` <strong>FREE SHIPPING WORLD WIDE!</strong><br />
     <strong>Features</strong><br />

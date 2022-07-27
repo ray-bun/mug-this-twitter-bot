@@ -24,12 +24,11 @@ export async function listenToTwit() {
 
     // Add our rules.
     await client.v2.updateStreamRules({
-      add: [{ value: `(@${process.env.TWITTER_USER_ID})` }],
+      add: [{ value: `(@${process.env.TWITTER_USER_ID}) -is:retweet -is:quote` }],
     });
-
     const stream = await client.v2.searchStream({
-      "tweet.fields": ["referenced_tweets", "author_id"],
-      expansions: ["referenced_tweets.id"],
+      "tweet.fields": ["referenced_tweets", "author_id", "in_reply_to_user_id", "created_at"],
+      expansions: ["referenced_tweets.id", "author_id", "in_reply_to_user_id", "entities.mentions.username", "referenced_tweets.id.author_id"],
     });
     // Enable auto reconnect
     stream.autoReconnect = true;
@@ -39,17 +38,20 @@ export async function listenToTwit() {
       console.log("tweetData", tweetData);
       const tweetFulltext: string = tweetData.text;
       const lowerCaseTweetFulltext: string = tweetFulltext.toLowerCase();
-      const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID + " ([Mm][Aa][Kk][Ee])");
+      const regexTweetText = new RegExp("@" + process.env.TWITTER_USER_ID);
       const commandMatched = lowerCaseTweetFulltext.match(regexTweetText);
       const checkForPrimiaryTweet = "referenced_tweets" in tweetData;
-      console.log("Primary tweet:", checkForPrimiaryTweet);
+      const countHowManyAt = (tweetFulltext.match(/@/g) || []).length;
+      console.log(`Primary tweet: ${checkForPrimiaryTweet} @ count: ${countHowManyAt}`);
       if (commandMatched != null && commandMatched.length && checkForPrimiaryTweet) {
         const checkTodayRequests = await checkNumberOfRequests(tweetData.author_id);
         const numberOfRequests = Object.entries(checkTodayRequests).length;
         const getRequestedUser = await client.v1.user({ user_id: tweetData.author_id });
+        const getInReplyUser = await client.v1.user({ user_id: tweetData.in_reply_to_user_id });
         const requestedUserScreenName = getRequestedUser.screen_name.toLocaleLowerCase();
-        console.log("requestedUserScreenName: ", requestedUserScreenName);
-        if (numberOfRequests >= Number(process.env.ALLOWED_REQUESTS_PER_DAY) || requestedUserScreenName === process.env.TWITTER_USER_ID) {
+        const inReplyUserScreenName = getInReplyUser.screen_name.toLocaleLowerCase();
+        console.log(`requestedUserScreenName: ${requestedUserScreenName} inReplyUserScreenName: ${inReplyUserScreenName}`);
+        if (numberOfRequests >= Number(process.env.ALLOWED_REQUESTS_PER_DAY) || requestedUserScreenName === process.env.TWITTER_USER_ID || inReplyUserScreenName === process.env.TWITTER_USER_ID) {
           console.log(`Exceeded Requests for today or invalid username: ${requestedUserScreenName} ${process.env.ALLOWED_REQUESTS_PER_DAY} | ${numberOfRequests}`);
         } else {
           console.log("24 hours requests: ", numberOfRequests);

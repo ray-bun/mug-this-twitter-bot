@@ -13,7 +13,7 @@ const client = new TwitterApi({
 
 export async function postToTwitter(twitterThreadID: string, twitterUserName: String, bannerBearGeneratedImages: any, cookingTweetID: any) {
   //delete cooking tweet
-  const randomQuotes = ["Free shipping world wide!", "#Bitcoin accepted"];
+  const randomQuotes = ["Free shipping world wide!", "#Bitcoin ⚡️ accepted", `Generate your own mugs by tagging @${process.env.TWITTER_USER_ID}`, "Print & Ship from Australia"];
   console.log("Deleting old tweet ID: ", cookingTweetID);
   await client.v2.deleteTweet(cookingTweetID);
 
@@ -37,10 +37,8 @@ export async function postToTwitter(twitterThreadID: string, twitterUserName: St
         // response to tweet
         const twitterReply = await client.v2.reply(
           `@${twitterUserName} your mugs is now cooked🍴 View or order your mugs at
-
-        https://mug-this.com/?product_cat=${twitterUserName}
-        
-        * Free shipping world wide!
+          https://mug-this.com/?product_cat=${twitterUserName}
+          ${randomQuotes[Math.floor(Math.random() * randomQuotes.length)]}
         `,
           twitterThreadID,
           {

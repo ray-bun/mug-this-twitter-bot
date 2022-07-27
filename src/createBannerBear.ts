@@ -99,6 +99,47 @@ async function generateBannerBearImage(
   tweetedRequestID: string
 ) {
   try {
+    let bannerBearModifications = [
+      {
+        name: "avatar",
+        image_url: tweetProfileImageUrl,
+      },
+      {
+        name: "name",
+        text: tweetName,
+      },
+      {
+        name: "handle",
+        text: `@${tweetUserName}`,
+      },
+      {
+        name: "tweet_message",
+        text: tweetTextWithoutURL,
+      },
+      {
+        name: "qr_code",
+        target: statusURL,
+      },
+    ];
+
+    if (tweetVerified) {
+      bannerBearModifications.push({
+        name: "verified",
+        image_url: "https://bannerbear.com/images/verified.png",
+      });
+    } else {
+      bannerBearModifications.push({
+        name: "verified",
+        image_url: "https://images.bannerbear.com/images/files/000/140/255/original/blank.png",
+      });
+    }
+    if (tweetMediaFile !== null) {
+      bannerBearModifications.push({
+        name: "media",
+        image_url: tweetMediaFile,
+      });
+    }
+
     console.log({
       bb,
       templateUID,
@@ -111,82 +152,18 @@ async function generateBannerBearImage(
       tweetMediaFile,
       tweetedRequestID,
     });
-    if (tweetMediaFile === null) {
-      const images = await bb.create_image(
-        templateUID,
-        {
-          modifications: [
-            {
-              name: "avatar",
-              image_url: tweetProfileImageUrl,
-            },
-            {
-              name: "verified",
-              image_url: tweetVerified ? "https://images.bannerbear.com/images/files/000/004/787/original/verified_white.png" : "",
-            },
-            {
-              name: "name",
-              text: tweetName,
-            },
-            {
-              name: "handle",
-              text: `@${tweetUserName}`,
-            },
-            {
-              name: "tweet_message",
-              text: tweetTextWithoutURL,
-            },
-            {
-              name: "qr_code",
-              target: statusURL,
-            },
-          ],
-          webhook_url: null,
-          transparent: true,
-          metadata: null,
-        },
-        true
-      );
-      return images;
-    } else {
-      const images = await bb.create_image(
-        templateUID,
-        {
-          modifications: [
-            {
-              name: "avatar",
-              image_url: tweetProfileImageUrl,
-            },
-            {
-              name: "verified",
-              image_url: tweetVerified ? "https://images.bannerbear.com/images/files/000/004/787/original/verified_white.png" : "",
-            },
-            { name: "main_media_file", image_url: tweetMediaFile },
-            {
-              name: "name",
-              text: tweetName,
-            },
-            {
-              name: "handle",
-              text: `@${tweetUserName}`,
-            },
-            {
-              name: "tweet_message",
-              text: tweetTextWithoutURL,
-            },
-            {
-              name: "qr_code",
-              target: statusURL,
-            },
-          ],
-          webhook_url: null,
-          transparent: true,
-          metadata: null,
-        },
-        true
-      );
-      return images;
-    }
+
+    const images = await bb.create_image(
+      templateUID,
+      {
+        modifications: bannerBearModifications,
+        webhook_url: null,
+        transparent: true,
+        metadata: null,
+      },
+      true
+    );
+    return images;
   } catch (err) {
     console.log(`error @ generateImage.ts with tweetedRequestID: ${tweetedRequestID} BB template ID: ${templateUID}} `, err);
     await updateBannerGeneratedStatus(tweetedRequestID, "FAILED");
