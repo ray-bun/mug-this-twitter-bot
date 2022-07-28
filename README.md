@@ -19,3 +19,12 @@ docker logs --follow [CONTAINER_ID]
 
 1. Create .github/workflows folders and then create main.yml file
 2. Set github secret keys for the repository and then pass the environment variables via --build-arg. See main.yml and Dockerfiles as an example
+
+### Updating docker image/container
+
+```
+docker container ls
+docker stop my_container
+docker image ls
+docker rmi -f imageID
+```

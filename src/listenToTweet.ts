@@ -56,9 +56,13 @@ export async function listenToTwit() {
         } else {
           console.log("24 hours requests: ", numberOfRequests);
           const getUserTargetTweet = await client.v1.singleTweet(tweetData.referenced_tweets[0].id);
+
+          const checkIfRequestedIsNotPreviousRequestor = await checkNumberOfRequests(getUserTargetTweet.user.id_str);
+          const notPreviousRequestorTweet = Object.entries(checkIfRequestedIsNotPreviousRequestor).length;
+
           const targetUsernameScreenName = getUserTargetTweet.user.screen_name.toLocaleLowerCase();
-          console.log(`Target user: ${targetUsernameScreenName} Requested Username: ${requestedUserScreenName}`);
-          if (targetUsernameScreenName !== process.env.TWITTER_USER_ID) {
+          console.log(`Target user: ${targetUsernameScreenName} Requested Username: ${requestedUserScreenName} Previous tweet reqestor: ${notPreviousRequestorTweet > 0} ${notPreviousRequestorTweet}`);
+          if (targetUsernameScreenName !== process.env.TWITTER_USER_ID && notPreviousRequestorTweet === 0) {
             const cookingTweetID = await requestReceivedTweet(tweetData.id, requestedUserScreenName);
             const requestedUserProfileImageUrl: string = getRequestedUser.profile_image_url_https.replace("_normal", "");
             const requestedUser = { screen_name: requestedUserScreenName, profile_image_url_https: requestedUserProfileImageUrl };
