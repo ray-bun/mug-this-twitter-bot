@@ -125,7 +125,7 @@ async function generateBannerBearImage(
     if (tweetVerified) {
       bannerBearModifications.push({
         name: "verified",
-        image_url: "https://bannerbear.com/images/verified.png",
+        image_url: "https://images.bannerbear.com/images/files/000/004/747/original/1200px-Twitter_Verified_Badge.svg.png",
       });
     } else {
       bannerBearModifications.push({
@@ -135,7 +135,7 @@ async function generateBannerBearImage(
     }
     if (tweetMediaFile !== null) {
       bannerBearModifications.push({
-        name: "media",
+        name: "main_media_file",
         image_url: tweetMediaFile,
       });
     }
