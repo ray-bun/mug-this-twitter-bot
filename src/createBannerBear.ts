@@ -115,6 +115,8 @@ async function generateBannerBearImage(
       {
         name: "tweet_message",
         text: tweetTextWithoutURL,
+        font_family_2: "Encode Sans",
+        color_2: "#f2a900",
       },
       {
         name: "qr_code",

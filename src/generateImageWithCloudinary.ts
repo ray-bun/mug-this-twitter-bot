@@ -30,7 +30,7 @@ export function generateImageWithCloudinary(imgageURL: string, bannerBearId: str
           { effect: "displace", overlay: "pill_mwmx6j.png", y: -15 },
           { effect: "trim" },
           { underlay: "mug_hqhp5m.png", width: 1600, x: 0, crop: "scale" },
-          { tags: "generated_mug" },
+          { tags: ["generated_mug"] },
           { secure: true },
         ],
       });
